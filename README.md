@@ -8,6 +8,7 @@ This project combines speech recognition, AI-based text processing, and text-to-
 - [Usage Instructions](#usage-instructions)
 - [Assumptions](#assumptions)
 - [Potential Issues](#potential-issues)
+- [Notes](#notes)
 
 ## Setup and Installation
 
@@ -91,15 +92,7 @@ if __name__ == "__main__":
 10. **Error Handling**:
     - While basic error handling is implemented, some edge cases may not be fully covered.
 
-## Setup Requirements
-
-1. Ensure you have met all the setup requirements.
-2. Be aware of the potential issues outlined above.
-3. Always monitor your API usage.
-4. Handle exceptions appropriately in a production environment as still in beta
-
-
-## Note:
+## Notes:
 - Working on deploying this to PyPi and adding more features
 - A more performant solution to stream chunk by chunk is still under developement and can be found in `utils/wip/ou2.py`
 - The project is still in beta and may have some issues. Please report any bugs or suggestions for improvement.
