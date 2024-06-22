@@ -83,7 +83,7 @@ class DeepGramUtil:
                 channels=1,
                 sample_rate=16000,
                 interim_results=True,
-                utterance_end_ms="2000",
+                utterance_end_ms="3000",
                 vad_events=True,
                 endpointing=300,
             )
@@ -94,7 +94,7 @@ class DeepGramUtil:
 
             if self.dg_connection.start(options, addons=addons) is False:
                 print("Failed to connect to Deepgram")
-                return
+                raise ConnectionError("Failed to connect to Deepgram")
 
             print( Fore.GREEN + "\n You can start speaking now\n")
             microphone = Microphone(self.dg_connection.send)

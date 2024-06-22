@@ -12,6 +12,7 @@ from openai import OpenAI
 from pydub import AudioSegment
 from pydub.playback import play
 import pydub
+import http
 
 
 class OpenAiUtil:
@@ -45,54 +46,58 @@ class OpenAiUtil:
         return response_data['choices'][0]['message']['content'] , summary_time
     
     def stream_audio(self , input_text, model='tts-1', voice='alloy'):
+        try:
         
-        # OpenAI API endpoint and parameters
-        print(f"sending for tts ")
-        url = "https://api.openai.com/v1/audio/speech"
-        
-
-        data = {
-            "model": model,
-            "input": input_text,
-            "voice": voice,
-            "response_format": "opus",
-        }
-
-        audio = pyaudio.PyAudio()
-
-        def get_pyaudio_format(subtype):
-            if subtype == 'PCM_16':
-                return pyaudio.paInt16
-            return pyaudio.paInt16
-        
-        start_time = time.time()
-
-        with requests.post(url, headers=self.headers, json=data, stream=True) as response:
-            if response.status_code == 200:
-                buffer = io.BytesIO()
-                for chunk in response.iter_content(chunk_size=4096):
-                    buffer.write(chunk)
+            # OpenAI API endpoint and parameters
+            print(f"sending for tts ")
+            url = "https://api.openai.com/v1/audio/speech"
             
-                buffer.seek(0)
 
-                with sf.SoundFile(buffer, 'r') as sound_file:
-                    format = get_pyaudio_format(sound_file.subtype)
-                    channels = sound_file.channels
-                    rate = sound_file.samplerate
-                    stream = audio.open(format=format, channels=channels, rate=rate, output=True)
-                    chunk_size = 1024
-                    data = sound_file.read(chunk_size, dtype='int16')
-                    print(f"Time to play: {time.time() - start_time} seconds")
+            data = {
+                "model": model,
+                "input": input_text,
+                "voice": voice,
+                "response_format": "opus",
+            }
 
-                    while len(data) > 0:
-                        stream.write(data.tobytes())
+            audio = pyaudio.PyAudio()
+
+            def get_pyaudio_format(subtype):
+                if subtype == 'PCM_16':
+                    return pyaudio.paInt16
+                return pyaudio.paInt16
+            
+            start_time = time.time()
+
+            with requests.post(url, headers=self.headers, json=data, stream=True) as response:
+                if response.status_code == 200:
+                    buffer = io.BytesIO()
+                    for chunk in response.iter_content(chunk_size=4096):
+                        buffer.write(chunk)
+                
+                    buffer.seek(0)
+
+                    with sf.SoundFile(buffer, 'r') as sound_file:
+                        format = get_pyaudio_format(sound_file.subtype)
+                        channels = sound_file.channels
+                        rate = sound_file.samplerate
+                        stream = audio.open(format=format, channels=channels, rate=rate, output=True)
+                        chunk_size = 1024
                         data = sound_file.read(chunk_size, dtype='int16')
+                        print(f"Time to play: {time.time() - start_time} seconds")
 
-                    stream.stop_stream()
-                    stream.close()
-            else:
-                print(f"Error: {response.status_code} - {response.text}")
+                        while len(data) > 0:
+                            stream.write(data.tobytes())
+                            data = sound_file.read(chunk_size, dtype='int16')
 
+                        stream.stop_stream()
+                        stream.close()
+                else:
+                    print(f"Error: {response.status_code} - {response.text}")
+
+        except Exception as e:
+            print(f"An unexpected error occurred in streaming audio: {e}")
+        finally:
             audio.terminate()
 
 
