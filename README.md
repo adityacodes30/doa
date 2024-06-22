@@ -1,4 +1,4 @@
-# DOA : Speech-to-Text-to-Speech (STT-TTS) with AI Processing
+# DOA : Speech-to-Text-to-Speech (STT-TTS) with AI Processing ( BETA )
 
 This project combines speech recognition, AI-based text processing, and text-to-speech capabilities to create a pipeline for converting spoken input into processed speech output.
 
@@ -59,8 +59,6 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-
-# Speech Recognition and Text-to-Speech Project
 
 ## Assumptions
 
